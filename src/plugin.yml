@@ -1,0 +1,7 @@
+name: LifeCompromise
+main: com.lc.mainListener
+autor: FEST_Channel, EvilGeniys
+version: 1.1.0
+commands:
+         lc:
+         temp:

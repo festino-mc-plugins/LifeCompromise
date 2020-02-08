@@ -1,0 +1,91 @@
+/*if(l.getBlock().getBiome() == Biome.HELL)
+			for(int i = Config.Netherradius;i>=-Config.Netherradius;i--)
+			{
+				for(int j = Config.Netherradius;j>=-Config.Netherradius;j--)
+				{
+					for(int o = Config.Netherradius;o>=-Config.Netherradius;o--)
+					{
+						double distance = distance(l.getX(),l.getY(),l.getZ(), l.getBlockX()+i+0.5,l.getBlockY()+j+0.5,l.getBlockZ()+o+0.5);
+						double kT = Math.abs(k/Math.pow(Config.TBlocksK,distance/Config.maxR)+b);
+						if(distance < Config.maxR){
+							num += kT;
+						}
+						else{
+							continue;
+						}
+						Material material = l.getWorld().getBlockAt(l.getBlockX()+i,l.getBlockY()+j,l.getBlockZ()+o).getType();
+						for(int cur=0;cur<Config.Blocks.length;cur++){
+							if(Config.Blocks[cur].id == material){
+								if(distance < Config.Blocks[cur].R)
+									result += TBlocks_dT[cur]*(Config.Blocks[cur].fireness? Effect : 1);
+							}
+						}
+					}
+				}
+			}
+		else
+		{*/
+	  		int r = (int) Math.floor(Config.maxR);
+			for(int i = -r;i<=r;i++)
+			{
+				for(int j = -r;j<=r;j++)
+				{
+					for(int o = -r;o<=r;o++)
+					{	
+						double distance = distance(l.getX(),l.getY(),l.getZ(), l.getBlockX()+i+0.5,l.getBlockY()+j+0.5,l.getBlockZ()+o+0.5);
+						double kT = Math.abs(k/Math.pow(Config.TBlocksK,distance/Config.maxR)+b);
+						if(distance < Config.maxR){
+							num += kT;
+						}
+						else{
+							continue;
+						}
+						Material material = l.getWorld().getBlockAt(l.getBlockX()+i,l.getBlockY()+j,l.getBlockZ()+o).getType();
+						for(int cur=0;cur<Config.Blocks.length;cur++){
+							if(Config.Blocks[cur].id == material){
+								if(distance < Config.Blocks[cur].R){
+									TBlocks_Sum[cur] += TBlocks_dT[cur]*(Config.Blocks[cur].fireness? Effect : 1);
+									TBlocks_Num[cur] += kT;
+								}
+							}
+						}
+					}
+				}
+			}
+			boolean notEnded = true;
+			byte u=change,d=(byte) (change-1),max=u,min=d;
+			while(notEnded){
+				if(result<=0 && u<TBlocks_dT.length){
+					if(TBlocks_Num[u] != 0){
+						result += TBlocks_Sum[u]*TBlocks_Num[u];
+						max = u;
+					}
+					u+=1;
+					continue;
+				}
+				if(result>=0 && d>=0){
+					if(TBlocks_Num[d] != 0){
+						result += TBlocks_Sum[d]*TBlocks_Num[d];
+						min = d;
+					}
+					d-=1;
+					continue;
+				}
+				notEnded = false;
+			}
+			if(result != 0.0){
+				double KOE = 1.5;
+				System.out.println(result+" "+num +" "+Config.Blocks[max].T);
+				result = (result/num)*KOE+Tair;
+				if(result > Config.Blocks[max].T) result = Config.Blocks[max].T - Tair;
+				else if(result < Config.Blocks[min].T) result = Config.Blocks[min].T - Tair;
+				else result = result - Tair;
+			}
+			if(l.getY() > Config.heightMaxT)
+				result += (Config.heightMaxT-l.getY())/Config.heightTDifference;
+			else
+				if(l.getBlock().getBiome() != Biome.SKY)
+					result -= 3*(Config.heightMaxT-l.getY())/Config.heightTDifference;
+				else
+					result -= (Config.heightMaxT-l.getY())/Config.heightTDifference;
+		//}
