@@ -1,7 +1,9 @@
 name: LifeCompromise
-main: com.lc.mainListener
+main: com.lc.Main
 autor: FEST_Channel, EvilGeniys
-version: 1.1.0
+version: 0.0.1
 commands:
          lc:
          temp:
+           aliases: [t]
+softdepend: [AuthMe]
