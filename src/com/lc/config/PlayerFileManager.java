@@ -17,7 +17,7 @@ public class PlayerFileManager {
 	private final Logger logger;
 	private final Main plugin;
 	
-	private static final String KEY_SOFT_LC = "LC-on", KEY_FORSED_LC = "forced-LC", KEY_TEMP = "T", KEY_THIRST = "Thirst";
+	private static final String KEY_SOFT_LC = "LC-on", KEY_FORSED_LC = "forced-LC", KEY_TEMP = "T", KEY_THIRST = "Thirst", KEY_OUTPUT_TICKS = "output-ticks";
 	
 	public PlayerFileManager(String plugin_dir_path, Logger logger, Main plugin) {
 		this.logger = logger;
@@ -47,6 +47,8 @@ public class PlayerFileManager {
 			lcp.setTemperature(T);
 			double thirst = ymlFormat.getDouble(KEY_THIRST);
 			lcp.setThirst(thirst);
+			int output_ticks = ymlFormat.getInt(KEY_OUTPUT_TICKS);
+			lcp.setOutputTicks(output_ticks);
 		} catch (Exception e) {
 			logger.severe("Could not load player " + p.getUniqueId() + "(" + p.getName() + ")!");
 		}
@@ -65,6 +67,7 @@ public class PlayerFileManager {
 			ymlFormat.set(KEY_SOFT_LC, lcp.getSoftLC());
 			ymlFormat.set(KEY_TEMP, lcp.getTemperature());
 			ymlFormat.set(KEY_THIRST, lcp.getThirst());
+			ymlFormat.set(KEY_OUTPUT_TICKS, lcp.getOutputTicks());
 
 			ymlFormat.save(dataFile);
 		} catch (Exception e) {

@@ -6,7 +6,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.lc.commands.CommandLC;
-import com.lc.commands.CommandTemp;
+import com.lc.commands.CommandStat;
+import com.lc.commands.CompleterLC;
+import com.lc.commands.CompleterStat;
 import com.lc.config.Config;
 import com.lc.config.PlayerFileManager;
 import com.lc.utils.AuthMeHook;
@@ -18,7 +20,7 @@ public class Main extends JavaPlugin {
 	
 	private final LCPlayerList lcp_list = new LCPlayerList(
 			new PlayerFileManager(getDataFolder().getAbsolutePath(), getLogger(), this));
-	private PlayerHandler main_handler = new PlayerHandler(lcp_list, config);
+	private PlayerHandler main_handler = new PlayerHandler(lcp_list, config, getServer().getWorlds());
 	// AuthMe integration
     private Listener authMeListener;
     private AuthMeHook authMeHook;
@@ -34,14 +36,19 @@ public class Main extends JavaPlugin {
 		PlayerEventHandler ehandler = new PlayerEventHandler(lcp_list, authMeHook);
 		getServer().getPluginManager().registerEvents(ehandler, this);
 		
+		UranHandler uran_handler = new UranHandler(config);
+		getServer().getPluginManager().registerEvents(uran_handler, this);
+		
 		CommandLC cmd_lc = new CommandLC(config, lcp_list);
-		CommandTemp cmd_temp = new CommandTemp(config, lcp_list);
+		CompleterLC completer_lc = new CompleterLC();
+		CommandStat cmd_stat = new CommandStat(config, lcp_list, main_handler);
+		CompleterStat completer_stat = new CompleterStat();
 		
 		getCommand("lc").setExecutor(cmd_lc);
-		getCommand("lc").setTabCompleter(cmd_lc);
+		getCommand("lc").setTabCompleter(completer_lc);
 		
-		getCommand("temp").setExecutor(cmd_temp);
-		getCommand("temp").setTabCompleter(cmd_temp);
+		getCommand("stat").setExecutor(cmd_stat);
+		getCommand("stat").setTabCompleter(completer_stat);
 
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, main_handler, 0L, 1L);
 	}

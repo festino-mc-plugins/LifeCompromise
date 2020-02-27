@@ -1,9 +1,9 @@
 name: LifeCompromise
 main: com.lc.Main
 autor: FEST_Channel, EvilGeniys
-version: 0.0.1
+version: 0.1.0
 commands:
          lc:
-         temp:
-           aliases: [t]
+         stat:
 softdepend: [AuthMe]
+api-version: 1.14

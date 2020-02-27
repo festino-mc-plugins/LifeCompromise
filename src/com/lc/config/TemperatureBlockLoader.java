@@ -21,9 +21,11 @@ public class TemperatureBlockLoader {
 		if (!data_file.exists())	{
 			try {
 				// TODO info message
+				System.out.print("created \"" + path + "\"");
 				data_file.createNewFile();
 			} catch (IOException e) {
 				// TODO error message
+				System.out.print("Couldn't create new file \"" + path + "\"");
 			}
 			return Tblocks;
 		}
@@ -32,14 +34,16 @@ public class TemperatureBlockLoader {
 		for(String block_id : yml_format.getKeys(false)) {
 			if (!yml_format.isConfigurationSection(block_id)) {
 				// TODO error
+				System.out.print(block_id + " is not ConfigurationSection");
 				continue;
 			}
 			
 			Material m;
 			try {
-				m = Material.valueOf(block_id);
+				m = Material.valueOf(block_id.toUpperCase());
 			} catch (Exception e) {
 				// TODO error
+				System.out.print(block_id + " is not valid Material");
 				continue;
 			}
 			
@@ -50,10 +54,12 @@ public class TemperatureBlockLoader {
 			boolean nether_only = cs.getBoolean(KEY_NETHER, false);
 			if (temp == Double.NEGATIVE_INFINITY || radius < 0) {
 				// error
+				System.out.print("Invalid arguments " + temp + " or " + radius);
 				continue;
 			}
 			
 			TemperatureBlock tblock = new TemperatureBlock(m, radius, temp, fireness, nether_only);
+			// System.out.print(tblock.toString());
 			Tblocks.add(tblock);
 		}
 		

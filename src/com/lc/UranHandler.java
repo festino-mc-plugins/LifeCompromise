@@ -1,5 +1,6 @@
 package com.lc;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -10,11 +11,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.lc.config.Config;
 import com.lc.config.Config.Key;
+import com.lc.utils.UtilsRandom;
 
 public class UranHandler implements Listener {
 
 	Config config;
 	private static final int MAX_LVL = 3;
+	
+	public UranHandler(Config config) {
+		this.config = config;
+	}
 	
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
@@ -36,7 +42,10 @@ public class UranHandler implements Listener {
 
 					ItemStack is = new ItemStack(Material.IRON_ORE, 1);
 					ItemMeta im = is.getItemMeta();
-					im.setDisplayName("Урановая руда");
+					if (lvl == MAX_LVL)
+						im.setDisplayName(ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Урановая руда");
+					else
+						im.setDisplayName("Урановая руда");
 					im.addEnchant(Enchantment.ARROW_DAMAGE, lvl, true);
 					is.setItemMeta(im);
 	                event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
@@ -49,6 +58,7 @@ public class UranHandler implements Listener {
 						IM.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
 						is.setItemMeta(IM);
 					}*/
+	                
 	                break;
 				}
 			}

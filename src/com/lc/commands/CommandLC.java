@@ -1,13 +1,11 @@
 package com.lc.commands;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import com.lc.LCPlayer;
@@ -15,7 +13,7 @@ import com.lc.LCPlayerList;
 import com.lc.config.Config;
 import com.lc.config.Config.Key;
 
-public class CommandLC implements CommandExecutor, TabCompleter {
+public class CommandLC implements CommandExecutor {
 	
 	private final Config config;
 	private final LCPlayerList lcp_list;
@@ -31,7 +29,7 @@ public class CommandLC implements CommandExecutor, TabCompleter {
 			if (sender instanceof Player) {
 				LCPlayer lcp = lcp_list.load((Player) sender);
 				String state = lcp.getSoftLC() ? "on" : "off";
-				sender.sendMessage("LC is " + state);
+				sender.sendMessage(ChatColor.GREEN + "LC is " + state);
 			}
 			return true;
 		}
@@ -46,11 +44,31 @@ public class CommandLC implements CommandExecutor, TabCompleter {
 				// TODO messages
 				if (option.equalsIgnoreCase("on")) {
 					lcp.setSoftLC(true);
-					sender.sendMessage("LC is on");
+					sender.sendMessage(ChatColor.GREEN + "LC is on");
 					return true;
 				} else if (option.equalsIgnoreCase("off")) {
 					lcp.setSoftLC(false);
-					sender.sendMessage("LC is off");
+					sender.sendMessage(ChatColor.GREEN + "LC is off");
+					return true;
+				}
+				if (option.equalsIgnoreCase("info")) {
+					sender.sendMessage(ChatColor.GREEN + "Your data:");
+					sender.sendMessage(ChatColor.GREEN + "    Temperature: " + lcp.getTemperature());
+					sender.sendMessage(ChatColor.GREEN + "    Thirst: " + lcp.getThirst());
+					sender.sendMessage(ChatColor.GREEN + "    Logged in: " + lcp.isLoggedIn());
+					sender.sendMessage(ChatColor.GREEN + "    Soft LC: " + lcp.getSoftLC());
+					sender.sendMessage(ChatColor.GREEN + "    Forced LC: " + lcp.getForcedLC());
+					sender.sendMessage(ChatColor.GREEN + "    LC: " + lcp.isLC());
+					return true;
+				}
+				// TODO refactor
+				if (option.equalsIgnoreCase("output_ticks")) {
+					if (args.length == 1) {
+						sender.sendMessage(ChatColor.GREEN + option + " = " + lcp.getOutputTicks());
+					} else {
+						lcp.setOutputTicks(Integer.parseInt(args[1]));
+						sender.sendMessage(ChatColor.GREEN + option + " set to " + lcp.getOutputTicks());
+					}
 					return true;
 				}
 			}
@@ -63,40 +81,6 @@ public class CommandLC implements CommandExecutor, TabCompleter {
 		}
 		return false;
 	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String lbl, String[] args) {
-		List<String> list = new ArrayList<>();
-		
-		if (args.length == 0) {
-			return list;
-		}
-
-		String option = args[0];
-		if (args.length == 1) {
-			String options[] = {"on", "off", "?"};
-			String op_options[] = {"config"};
-			
-			for (String op : options)
-				if (op.startsWith(option))
-					list.add(op);
-			
-			if (sender.isOp()) { // TODO permission system
-				for (String op : op_options)
-					if (op.startsWith(option))
-						list.add(op);
-			}
-			return list;
-		}
-		
-		if (args.length >= 2) {
-			if (args[0].equalsIgnoreCase("config")) {
-				return onConfigComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-			}
-		}
-		
-		return list;
-	}
 	
 	public boolean onConfigCommand(CommandSender sender, String[] args) {
 		if (args.length == 0) {
@@ -105,10 +89,12 @@ public class CommandLC implements CommandExecutor, TabCompleter {
 			String option = args[0];
 			if (option.equalsIgnoreCase("reload")) {
 				config.load();
+				sender.sendMessage("Config reloaded.");
 				return true;
 			}
 			if (option.equalsIgnoreCase("save")) {
 				config.save();
+				sender.sendMessage("Config saved.");
 				return true;
 			}
 			if (option.equalsIgnoreCase("set")) {
@@ -156,11 +142,7 @@ public class CommandLC implements CommandExecutor, TabCompleter {
 						return false;
 					}
 					Key key = Key.getKey(key_str);
-					if (args.length == 2) {
-						// TODO help var type
-						sender.sendMessage("VALID TYPE: " + key.getValueClass());
-						return false;
-					}
+					
 					// TODO msg OK
 					sender.sendMessage("OK, value of \"" + key + "\" is " + config.get(key).toString());
 				}
@@ -168,59 +150,6 @@ public class CommandLC implements CommandExecutor, TabCompleter {
 			
 		}
 		return false;
-	}
-	
-	public List<String> onConfigComplete(CommandSender sender, String[] args) {
-		List<String> list = new ArrayList<>();
-		if (args.length == 0) {
-			return list;
-		}
-		
-		String option = args[0].toLowerCase();
-		System.out.print(args.length + " " + args.toString());
-		if (args.length == 1) {
-			String options[] = {"reload", "save", "set", "get"};
-			for (String op : options)
-				if (op.startsWith(option))
-					list.add(op);
-			return list;
-		}
-
-		String key_arg = args[1].toLowerCase();
-		if (args.length == 2) {
-			// reload
-			// save
-			// set [...], get [...]
-			if (option.equalsIgnoreCase("set") || option.equalsIgnoreCase("get")) {
-				List<String> keys = Key.getKeys();
-				for (String k : keys)
-					if (k.toLowerCase().contains(key_arg))
-						list.add(k);
-				return list;
-			}
-		}
-		
-		if (args.length == 3) {
-			// reload
-			// save
-			// get ...
-			// set ... [...]
-			if (option.equalsIgnoreCase("set")) {
-				if (!Key.isValidKey(key_arg)) {
-					return list;
-				}
-				
-				Key key = Key.getKey(key_arg);
-				Class<?> clazz = key.getValueClass();
-				if (clazz == Boolean.class) {
-					list.add("true");
-					list.add("false");
-				} else {
-					list.add(key.getDefault().toString());
-				}
-			}
-		}
-		return list;
 	}
 	
 }
