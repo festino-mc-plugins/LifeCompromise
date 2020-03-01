@@ -8,12 +8,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
+import com.lc.commands.PermissionWorker.Result;
+import com.lc.config.Config;
 import com.lc.config.Config.Key;
 
 public class CompleterLC implements TabCompleter {
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String lbl, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String lbl, String[] args)
+	{
 		List<String> list = new ArrayList<>();
 		
 		if (args.length == 0) {
@@ -21,25 +24,29 @@ public class CompleterLC implements TabCompleter {
 		}
 
 		String option = args[0];
+		
 		if (args.length == 1) {
-			String options[] = {"on", "off", "?", "info", "output_ticks"};
-			String op_options[] = {"config"};
-			
+			String options[] = {"on", "off", "?", "info", "output_ticks", "config"};
+
 			for (String op : options)
-				if (op.startsWith(option))
-					list.add(op);
-			
-			if (sender.isOp()) { // TODO permission system
-				for (String op : op_options)
-					if (op.startsWith(option))
+				if (op.startsWith(option)) {
+					String completed_args[] = args.clone();
+					completed_args[0] = op;
+					if (PermissionWorker.canDispatch(sender, cmd.getName(), completed_args) == Result.ALLOW)
 						list.add(op);
-			}
+				}
+			
 			return list;
 		}
 		
 		if (args.length >= 2) {
 			if (args[0].equalsIgnoreCase("config")) {
 				return onConfigComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+			}
+			if (args.length == 2) {
+				if (args[0].equalsIgnoreCase("output_ticks")) {
+					list.add("" + Config.Key.DEFAULT_OUTPUT_TICKS.getDefault());
+				}
 			}
 		}
 		

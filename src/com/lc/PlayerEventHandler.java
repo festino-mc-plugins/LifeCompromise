@@ -1,8 +1,13 @@
 package com.lc;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -11,10 +16,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.lc.utils.AuthMeHook;
+import com.lc.utils.Utils;
 
 public class PlayerEventHandler implements Listener {
 	
 	private static final int TITLE_COOLDOWN = 40;
+	private static final int CAULDRON_N = 3;
+	private static final double CAULDRON_WATER = 30 * CAULDRON_N;
+	private static final int CAULDRON_COOLDOWN = 5;
 	
 	private final DrinkPair drinkables[] = {
 			new DrinkPair(Material.MILK_BUCKET, 100),
@@ -48,6 +57,16 @@ public class PlayerEventHandler implements Listener {
 		lcp.reset();
 	}
 	
+	@EventHandler
+	public void onPlayerResurrect(EntityResurrectEvent event)
+	{
+		if (event.isCancelled()) return;
+		if (event.getEntityType() != EntityType.PLAYER) return;
+		
+		LCPlayer lcp = lcp_list.load((Player) event.getEntity());
+		lcp.reset();
+	}
+	
 
 	@EventHandler
 	public void onPlayerBedEnter(PlayerBedEnterEvent event)
@@ -57,18 +76,27 @@ public class PlayerEventHandler implements Listener {
 		lcp.setTitleCooldown(0);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event)
 	{
-		if (event.hasBlock() && event.getClickedBlock().getType().toString().toUpperCase().contains("BED")) {
-			LCPlayer lcp = lcp_list.load(event.getPlayer());
+		if (event.isCancelled()) return;
+		if (!event.hasBlock()) return;
+
+		LCPlayer lcp = lcp_list.load(event.getPlayer());
+		Block b = event.getClickedBlock();
+		if (b.getType().toString().toUpperCase().contains("BED")) {
 			lcp.setTitleCooldown(TITLE_COOLDOWN);
 		}
 		// cauldron drink
-		
+		if (lcp.canDrinkCauldron() && Utils.getCauldronLevel(b) > 0) {
+			lcp.addThirst(CAULDRON_WATER / CAULDRON_N);
+			lcp.setCauldronTicks(CAULDRON_COOLDOWN);
+			Utils.decreaseCauldronLevel(b);
+		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onItemConsume(PlayerItemConsumeEvent event)
 	{
 		LCPlayer lcp = lcp_list.load(event.getPlayer());

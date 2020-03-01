@@ -8,6 +8,8 @@ public class TemperatureBlock {
 	public final double t;
 	public final boolean fireness;
 	public final boolean nether_only;
+	private String tag = null;
+	private boolean has_tag = false;
 	
 	public TemperatureBlock(Material m, double r, double t)
 	{
@@ -27,8 +29,22 @@ public class TemperatureBlock {
 		this.nether_only = nether_only;
 	}
 	
+	public void setTag(String tag) {
+		this.tag = tag;
+		has_tag = tag != null && !tag.isEmpty();
+	}
+	
+	public String getTag() {
+		return tag;
+	}
+	
+	public boolean hasTag() {
+		return has_tag;
+	}
+	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{m:" + m + ", T:" + t + ", R:" + r + ", fireness:" + fireness + ", nether:" + nether_only + "}";
+		return getClass().getSimpleName() + "{m:" + m + ", T:" + t + ", R:" + r
+				+ ", fireness:" + fireness + ", nether:" + nether_only + ", tag:\"" + tag + "\"}";
 	}
 }

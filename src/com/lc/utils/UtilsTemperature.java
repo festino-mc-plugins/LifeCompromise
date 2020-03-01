@@ -1,13 +1,13 @@
 package com.lc.utils;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -45,6 +45,7 @@ public class UtilsTemperature {
 		}
 	}
 	
+	/** Updates random */
 	public void onTick() {
 		rand_ticks++;
 		if (rand_ticks >= RANDOM_TICKS_MAX) {
@@ -184,7 +185,7 @@ public class UtilsTemperature {
 	    double temp_speed = config.get(Key.TEMP_SPEED);
 		temp_speed /= armor_impact;
 		
-	    if (p.getLocation().getBlock().getType() == Material.WATER)
+	    if (Utils.isInWater(p))
 	    	temp_speed /= water;
 	    
 	    return temp_speed;
@@ -209,15 +210,22 @@ public class UtilsTemperature {
 		for (int i = -block_radius; i <= block_radius; i++) {
 			for (int j = -block_radius; j <= block_radius; j++) {
 				for (int k = -block_radius; k <= block_radius; k++) {
-					// dist
 					Block b = center_block.getRelative(i, j, k);
 					double distance = getDistance(loc, b);
+					if (distance > block_radius)
+						continue;
 					Material m = b.getType();
-					// furnace
 					for (TemperatureBlock tblock : Tblocks) {
 						if (tblock.r >= distance && tblock.m == m) {
-							if (!isNether(b.getBiome()) && tblock.nether_only)
+							if (tblock.nether_only && !isNether(b.getBiome()))
 								break;
+							if (tblock.hasTag() && tblock.getTag() == "lit") // TODO explicit behavior (i.e. in TemperatureBlock)
+								System.out.print(tblock.toString());
+								if (b.getBlockData() instanceof Lightable) {
+									Lightable bd = (Lightable) b.getBlockData();
+									if (!bd.isLit())
+										break;
+								}
 							
 							double temp = tblock.t * (tblock.r + 1 - distance);
 							if (tblock.fireness)
@@ -399,10 +407,10 @@ public class UtilsTemperature {
 			result = (l.getY() - 10) / 63;
 			if (result < 0)
 				result = 0;
-			double temp = (l.getBlock().getLightFromSky()) / 10;
+			double temp = l.getBlock().getLightFromSky() / 10.0;
 			if (temp > 1)
 				temp = 1;
-			result = result + temp + 0.1;
+			result = result + temp + 0.1; // min 0.1
 			if (result > 1)
 				result = 1;
 		}
@@ -425,9 +433,9 @@ public class UtilsTemperature {
 		case SAVANNA_PLATEAU:
 		case SHATTERED_SAVANNA_PLATEAU:
 		case STONE_SHORE:
-			return false;
-		default:
 			return true;
+		default:
+			return false;
 		}
 	}
 	
@@ -447,6 +455,8 @@ public class UtilsTemperature {
 		case SAVANNA_PLATEAU:
 		case SHATTERED_SAVANNA_PLATEAU:
 			return false;
+		default:
+			break;
 		}
 		if (isNether(biome) || isEnd(biome))
 			return false;

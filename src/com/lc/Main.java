@@ -44,11 +44,11 @@ public class Main extends JavaPlugin {
 		CommandStat cmd_stat = new CommandStat(config, lcp_list, main_handler);
 		CompleterStat completer_stat = new CompleterStat();
 		
-		getCommand("lc").setExecutor(cmd_lc);
-		getCommand("lc").setTabCompleter(completer_lc);
+		getCommand(CommandLC.LC_COMMAND).setExecutor(cmd_lc);
+		getCommand(CommandLC.LC_COMMAND).setTabCompleter(completer_lc);
 		
-		getCommand("stat").setExecutor(cmd_stat);
-		getCommand("stat").setTabCompleter(completer_stat);
+		getCommand(CommandStat.STAT_COMMAND).setExecutor(cmd_stat);
+		getCommand(CommandStat.STAT_COMMAND).setTabCompleter(completer_stat);
 
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, main_handler, 0L, 1L);
 	}

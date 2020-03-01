@@ -133,8 +133,8 @@ public class Config implements IConfig {
 		DEFAULT_SPEED("default-speed", 0.1),
 		K_FIRE_RESISTANCE("k-fire-resistance", 1d / 4),
 		
-		BIOME_TEMP_DIFF_SMALL("biome-temp-diff-small", 10d),
-		BIOME_TEMP_DIFF_BIG("biome-temp-diff-big", 30d),
+		BIOME_TEMP_DIFF_SMALL("biome-temp-diff-small", -10d),
+		BIOME_TEMP_DIFF_BIG("biome-temp-diff-big", -30d),
 		RANDOM_TEMP_DIFF("random-max-temp-diff", 2d),
 		HEIGHT_MAX_T("height-max-temp", 63d),
 		HEIGHT_T_DIFF("height-temp-diff-blocks", 20d),

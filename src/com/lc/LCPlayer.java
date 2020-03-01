@@ -4,7 +4,9 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import com.lc.config.Config.Key;
 import com.lc.utils.ArmorWeight;
@@ -22,8 +24,8 @@ public class LCPlayer {
 	
 	Main plugin;
 	Player p;
-	private boolean softLC;
-	private LCMode forcedLC;
+	private boolean softLC = false;
+	private LCMode forcedLC = LCMode.NONE;
 	
 	private Double NormalT = 26d;
 	private Double T;
@@ -35,8 +37,8 @@ public class LCPlayer {
 	private int outputTicks = maxOutputTicks;
 	private double Taround;
 
-	public TempDebuffLevel temp_debuff;
-	public ThirstDebuffLevel thirst_debuff;
+	public TempDebuffLevel temp_debuff = TempDebuffLevel.NONE;
+	public ThirstDebuffLevel thirst_debuff = ThirstDebuffLevel.NONE;
 	private ArmorWeight armor_weight;
 
 	//private double dTnormal;
@@ -44,22 +46,19 @@ public class LCPlayer {
 	// private double BiomeTemperature;
 	// private double BlocksTemperature;
 	// private double EvilTemperature;
-	private double lastY;
-	private int swimming_ticks;
+	private Location last_loc;
+	private int swimming_ticks = 0;
+	private int cauldron_ticks = 0;
 	
 	public LCPlayer(Player p, Main plugin)
 	{
 		this.plugin = plugin;
 		this.p = p;
-		softLC = false;
-		forcedLC = LCMode.NONE;
 		maxOutputTicks = plugin.config.get(Key.DEFAULT_OUTPUT_TICKS);
 		reset();
 		logged = true;
-		temp_debuff = TempDebuffLevel.NONE;
-		thirst_debuff = ThirstDebuffLevel.NONE;
 		unbed = 0;
-		updateLastY();
+		updateMove();
 	}
 	
 	public void reset() {
@@ -239,14 +238,22 @@ public class LCPlayer {
 		this.armor_weight = armor_weight;
 	}
 	
-	public double getLastY() {
-		return lastY;
+	public Location getLastLocation() {
+		return last_loc;
 	}
 	
-	public void updateLastY() {
-		lastY = p.getLocation().getY();
+	public Vector getLastMove() {
+		return p.getLocation().toVector().subtract(last_loc.toVector());
+	}
+	
+	public void updateMove() {
+		// TODO security fix
+		last_loc = p.getLocation();
 		if (swimming_ticks > 0) {
 			swimming_ticks--;
+		}
+		if (cauldron_ticks > 0) {
+			cauldron_ticks--;
 		}
 	}
 	
@@ -256,5 +263,13 @@ public class LCPlayer {
 	}
 	public boolean canSwim() {
 		return swimming_ticks > 0;
+	}
+	
+	public void setCauldronTicks(int ticks) {
+		if (ticks > 0)
+			cauldron_ticks = ticks;
+	}
+	public boolean canDrinkCauldron() {
+		return cauldron_ticks <= 0;
 	}
 }

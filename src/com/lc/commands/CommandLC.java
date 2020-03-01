@@ -10,11 +10,13 @@ import org.bukkit.entity.Player;
 
 import com.lc.LCPlayer;
 import com.lc.LCPlayerList;
+import com.lc.commands.PermissionWorker.Result;
 import com.lc.config.Config;
 import com.lc.config.Config.Key;
 
 public class CommandLC implements CommandExecutor {
 	
+	public static final String LC_COMMAND = "lc";
 	private final Config config;
 	private final LCPlayerList lcp_list;
 	
@@ -24,7 +26,15 @@ public class CommandLC implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args)
+	{
+		Result result = PermissionWorker.canDispatch(sender, cmd.getName(), args);
+		if (result == Result.DENY_PERM) {
+			denyPerm(sender);
+		} else if (result == Result.DENY_NOPLAYER) {
+			denyNoPlayer(sender);
+		}
+		
 		if (args.length == 0) {
 			if (sender instanceof Player) {
 				LCPlayer lcp = lcp_list.load((Player) sender);
@@ -151,5 +161,13 @@ public class CommandLC implements CommandExecutor {
 		}
 		return false;
 	}
-	
+
+	public void denyPerm(CommandSender sender) {
+		sender.sendMessage(ChatColor.RED + "You don't have permission to perform this command.");
+	}
+
+	public void denyNoPlayer(CommandSender sender) {
+		sender.sendMessage(ChatColor.RED + "You must be player to perform this command. "
+				+ "Check out \"" + LC_COMMAND + " ?\" for available commands.");
+	}
 }

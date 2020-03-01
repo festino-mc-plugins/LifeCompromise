@@ -1,7 +1,11 @@
 package com.lc.commands;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,11 +14,13 @@ import org.bukkit.entity.Player;
 import com.lc.LCPlayer;
 import com.lc.LCPlayerList;
 import com.lc.PlayerHandler;
+import com.lc.commands.PermissionWorker.Result;
 import com.lc.config.Config;
 import com.lc.utils.UtilsArmor;
 
 public class CommandStat implements CommandExecutor {
 	
+	public static final String STAT_COMMAND = "stat";
 	private final Config config;
 	private final LCPlayerList lcp_list;
 	private final PlayerHandler UTILS_INSTANCES;
@@ -26,7 +32,15 @@ public class CommandStat implements CommandExecutor {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args)
+	{
+		Result result = PermissionWorker.canDispatch(sender, cmd.getName(), args);
+		if (result == Result.DENY_PERM) {
+			denyPerm(sender);
+		} else if (result == Result.DENY_NOPLAYER) {
+			denyNoPlayer(sender);
+		}
+		
 		LCPlayer lcp = null;
 		boolean sender_is_player = sender instanceof Player;
 		if (sender_is_player) {
@@ -47,11 +61,25 @@ public class CommandStat implements CommandExecutor {
 			
 			if (args[0].equalsIgnoreCase("info")) {
 				if (args.length > 1) {
-					//lcp = lcp_list.load();
-					//sender.sendMessage(getDetailedStat(lcp));
+					String nickname = args[1];
+					// TODO getUUID function
+					Player p_online = Bukkit.getPlayer(nickname);
+					if (p_online != null) {
+						UUID uuid = p_online.getUniqueId();
+						lcp = lcp_list.load(uuid);
+					} else {
+						// TODO fast name list
+						for (OfflinePlayer p : Bukkit.getOfflinePlayers() ) {
+							if ( nickname.equalsIgnoreCase(p.getName()) ) {
+								UUID uuid = p.getUniqueId();
+								lcp = lcp_list.load(uuid);
+								break;
+							}
+						}
+					}
 				}
 				
-				if (sender_is_player) {
+				if (lcp != null) {
 					sender.sendMessage(getDetailedStat(lcp));
 				}
 			}
@@ -119,24 +147,37 @@ public class CommandStat implements CommandExecutor {
 	}
 	
 	public String getDetailedStat(LCPlayer lcp) {
-		String nickname = lcp.getPlayer().getName();
-		Location loc = lcp.getPlayer().getLocation();
-		double fire_resist = UTILS_INSTANCES.utils_temp.getFireResist(lcp.getPlayer());
+		Player p = lcp.getPlayer();
+		String nickname = p.getName();
+		Location loc = p.getLocation();
+		double fire_resist = UTILS_INSTANCES.utils_temp.getFireResist(p);
+		double Tair = UTILS_INSTANCES.utils_temp.getAirTemperature(loc, fire_resist);
+		double dT = Tair - lcp.getTemperature();
 		String res =
 				String.format(ChatColor.GREEN + "%s %s:\n", nickname, "stat") +
 				String.format("    %s: %f (lvl: %s)\n", "Thirst", lcp.getThirst(), lcp.getThirstDebuff().toString()) +
 				//String.format("\t%s: %f", "Normal temperature", lcp.getTemperature()) + "\n" +
 				String.format("    %s: %f (lvl: %s)\n", "Temperature", lcp.getTemperature(), lcp.getTemperatureDebuff().toString()) +
-				String.format("    %s: %f\n", "Air temperature", UTILS_INSTANCES.utils_temp.getAirTemperature(loc, fire_resist)) +
+				String.format("    %s: %f\n", "Speed temperature", UTILS_INSTANCES.utils_temp.getTemperatureSpeed(p, dT > 0)) +
+				String.format("    %s: %f\n", "Air temperature", Tair) +
 				String.format("    %s: %f\n", "\"Biomity\"", UTILS_INSTANCES.utils_temp.getBiomityBySunlight(loc)) +
 				String.format("    %s: %f\n", "BiomeTemperture", UTILS_INSTANCES.utils_temp.getBiomeTemperature(loc)) +
 				String.format("    %s: %f\n", "BlocksTemperture", UTILS_INSTANCES.utils_temp.getBlocksTemperature(loc, fire_resist)) +
 				String.format("    %s: %f\n", "RandomTemperature", UTILS_INSTANCES.utils_temp.getRandomTemperature()) +
-				String.format("    %s: %f (lvl: %s)\n", "ArmorWeight", UtilsArmor.calc(lcp.getPlayer()), lcp.getArmorWeight().toString());
+				String.format("    %s: %f (lvl: %s)\n", "ArmorWeight", UtilsArmor.calc(p), lcp.getArmorWeight().toString());
 		return res;
 	}
 	
 	public LCPlayer get(Player p) {
 		return lcp_list.load(p);
+	}
+
+	public void denyPerm(CommandSender sender) {
+		sender.sendMessage(ChatColor.RED + "You don't have permission to perform this command.");
+	}
+
+	public void denyNoPlayer(CommandSender sender) {
+		sender.sendMessage(ChatColor.RED + "You must be player to perform this command. "
+				+ "Check out \"" + STAT_COMMAND + " ?\" for available commands.");
 	}
 }

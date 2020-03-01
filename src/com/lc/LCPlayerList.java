@@ -2,6 +2,7 @@ package com.lc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
@@ -28,6 +29,11 @@ public class LCPlayerList {
 		if (lcp != null)
 			players.add(lcp);
 		return lcp;
+	}
+	
+	public LCPlayer load(UUID uuid) {
+		
+		return null;
 	}
 	
 	public boolean isLoaded(Player p) {
