@@ -141,11 +141,6 @@ public class Config implements IConfig {
 		STORM_TEMP_DIFF("storm-temp-diff", 4d),
 		THUNDER_TEMP_DIFF("thunder-temp-diff", 6d),
 
-
-/*minSlownessThirstProcent: 50
-minNauseaThirstProcent: 25
-speedTempDecrease: 20
-speedThirstDecrease: 15*/
 		THIRST_SLOWNESS_PERCENT("thirst-debuff-1-pct", 50d),
 		THIRST_NAUSEA_PERCENT("thirst-debuff-2-pct", 25d),
 		TEMP_SLOWNESS("temp-slowness-pct", 20d),
