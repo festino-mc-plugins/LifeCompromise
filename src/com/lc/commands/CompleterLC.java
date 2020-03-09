@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import com.lc.commands.PermissionWorker.Result;
 import com.lc.config.Config;
@@ -26,7 +28,7 @@ public class CompleterLC implements TabCompleter {
 		String option = args[0];
 		
 		if (args.length == 1) {
-			String options[] = {"on", "off", "?", "info", "output_ticks", "config"};
+			String options[] = {"on", "off", "?", "info", "output_ticks", "config", "forceON", "forceOFF", "forceNONE"};
 
 			for (String op : options)
 				if (op.startsWith(option)) {
@@ -46,6 +48,14 @@ public class CompleterLC implements TabCompleter {
 			if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("output_ticks")) {
 					list.add("" + Config.Key.DEFAULT_OUTPUT_TICKS.getDefault());
+				}
+			}
+			if (args.length == 2) {
+				if (args[0].equalsIgnoreCase("forceON") || args[0].equalsIgnoreCase("forceOFF") || args[0].equalsIgnoreCase("forceNONE")) {
+					String[] trunc_args = Arrays.copyOfRange(args, 0, 1);
+					if (PermissionWorker.canDispatch(sender, cmd.getName(), trunc_args) == Result.ALLOW)
+						for (Player p : Bukkit.getOnlinePlayers())
+							list.add(p.getName());
 				}
 			}
 		}

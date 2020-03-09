@@ -32,6 +32,8 @@ public class PermissionWorker {
 				return allowPlayer(sender);
 			if (arg.equalsIgnoreCase("info"))
 				return allowPlayer(sender);
+			if (is_op && (arg.equalsIgnoreCase("forceON") || arg.equalsIgnoreCase("forceOFF") || arg.equalsIgnoreCase("forceNONE"))) // TODO key words to constants
+				return Result.ALLOW;
 			if (arg.equalsIgnoreCase("config") && is_op)
 				return Result.ALLOW;
 		}

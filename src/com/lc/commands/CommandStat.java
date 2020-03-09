@@ -16,6 +16,7 @@ import com.lc.LCPlayerList;
 import com.lc.PlayerHandler;
 import com.lc.commands.PermissionWorker.Result;
 import com.lc.config.Config;
+import com.lc.utils.Utils;
 import com.lc.utils.UtilsArmor;
 
 public class CommandStat implements CommandExecutor {
@@ -62,20 +63,9 @@ public class CommandStat implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("info")) {
 				if (args.length > 1) {
 					String nickname = args[1];
-					// TODO getUUID function
-					Player p_online = Bukkit.getPlayer(nickname);
-					if (p_online != null) {
-						UUID uuid = p_online.getUniqueId();
+					UUID uuid = Utils.getUUID(nickname);
+					if (uuid != null) {
 						lcp = lcp_list.load(uuid);
-					} else {
-						// TODO fast name list
-						for (OfflinePlayer p : Bukkit.getOfflinePlayers() ) {
-							if ( nickname.equalsIgnoreCase(p.getName()) ) {
-								UUID uuid = p.getUniqueId();
-								lcp = lcp_list.load(uuid);
-								break;
-							}
-						}
 					}
 				}
 				
@@ -164,7 +154,7 @@ public class CommandStat implements CommandExecutor {
 				String.format("    %s: %f\n", "BiomeTemperture", UTILS_INSTANCES.utils_temp.getBiomeTemperature(loc)) +
 				String.format("    %s: %f\n", "BlocksTemperture", UTILS_INSTANCES.utils_temp.getBlocksTemperature(loc, fire_resist)) +
 				String.format("    %s: %f\n", "RandomTemperature", UTILS_INSTANCES.utils_temp.getRandomTemperature()) +
-				String.format("    %s: %f (lvl: %s)\n", "ArmorWeight", UtilsArmor.calc(p), lcp.getArmorWeight().toString());
+				String.format("    %s: %f (lvl: %s)\n", "ArmorWeight", UtilsArmor.calc(p), lcp.getArmorWeight().toString()); // TODO fix "LC_ON = false" NPE 
 		return res;
 	}
 	

@@ -32,7 +32,9 @@ public class LCPlayerList {
 	}
 	
 	public LCPlayer load(UUID uuid) {
-		
+		if (isLoaded(uuid)) {
+			return get(uuid);
+		}
 		return null;
 	}
 	
@@ -41,8 +43,16 @@ public class LCPlayerList {
 	}
 	
 	private LCPlayer get(Player p) {
+		return get(p.getUniqueId());
+	}
+	
+	private boolean isLoaded(UUID uuid) {
+		return get(uuid) != null;
+	}
+	
+	private LCPlayer get(UUID uuid) {
 		for (LCPlayer lcp : players)
-			if (lcp.p == p)
+			if (lcp.p.getUniqueId().equals(uuid))
 				return lcp;
 		
 		return null;

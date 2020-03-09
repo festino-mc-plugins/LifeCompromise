@@ -1,6 +1,7 @@
 package com.lc.commands;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -9,10 +10,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.lc.LCPlayer;
+import com.lc.LCPlayer.LCMode;
 import com.lc.LCPlayerList;
 import com.lc.commands.PermissionWorker.Result;
 import com.lc.config.Config;
 import com.lc.config.Config.Key;
+import com.lc.utils.Utils;
 
 public class CommandLC implements CommandExecutor {
 	
@@ -83,11 +86,44 @@ public class CommandLC implements CommandExecutor {
 				}
 			}
 			
+			if (sender.isOp()) {
+				boolean forceON = option.equalsIgnoreCase("forceON");
+				boolean forceOFF = option.equalsIgnoreCase("forceOFF");
+				boolean forceNONE = option.equalsIgnoreCase("forceNONE");
+				if (forceON || forceOFF || forceNONE) {
+					if (args.length <= 1) {
+						sender.sendMessage(ChatColor.RED + "Enter player nickname!");
+						return false;
+					}
+					String nickname = args[1];
+					UUID uuid = Utils.getUUID(nickname);
+					if (uuid == null) {
+						sender.sendMessage(ChatColor.RED + "Could not find player \"" + nickname + "\"!");
+						return false;
+					}
+					LCPlayer lcp = lcp_list.load(uuid);
+					if (lcp == null) {
+						sender.sendMessage(ChatColor.RED + "Could not load player \"" + nickname + "\"!");
+						return false;
+					}
+					if (forceON)
+						lcp.setForcedLC(LCMode.FORCED_ON);
+					if (forceOFF)
+						lcp.setForcedLC(LCMode.FORCED_OFF);
+					if (forceNONE)
+						lcp.setForcedLC(LCMode.NONE);
+					
+					if (lcp.getPlayer() != null)
+						nickname = lcp.getPlayer().getName();
+					sender.sendMessage(ChatColor.GREEN + "forcedLC of the player \"" + nickname + "\" set to " + lcp.getForcedLC() + "!");
+				}
+			}
+			
 			if (option.equalsIgnoreCase("config")) {
 				return onConfigCommand(sender, Arrays.copyOfRange(args, 1, args.length));
 			}
 			
-			// reload (???), debug (removed)
+			// debug ???
 		}
 		return false;
 	}

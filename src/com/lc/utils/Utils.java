@@ -1,8 +1,11 @@
 package com.lc.utils;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.Waterlogged;
@@ -128,5 +131,20 @@ public class Utils {
 				return true;
 		}
 		return false;
+	}
+	
+	public static UUID getUUID(String nickname) {
+		Player p_online = Bukkit.getPlayer(nickname);
+		if (p_online != null) {
+			return p_online.getUniqueId();
+		} else {
+			// TODO fast name list
+			for (OfflinePlayer p : Bukkit.getOfflinePlayers() ) {
+				if ( nickname.equalsIgnoreCase(p.getName()) ) {
+					return p.getUniqueId();
+				}
+			}
+		}
+		return null;
 	}
 }
