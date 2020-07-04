@@ -372,8 +372,12 @@ public class UtilsTemperature {
 		case SNOWY_TAIGA_MOUNTAINS: return 8;
 		case SNOWY_TAIGA_HILLS: return 10;
 		case TAIGA_HILLS: return 15;
-		
-		case NETHER: return 29;
+
+		case NETHER_WASTES: return 31;
+		case CRIMSON_FOREST: return 28;
+		case WARPED_FOREST: return 28;
+		case BASALT_DELTAS: return 35;
+		case SOUL_SAND_VALLEY: return 26;
 		case THE_END:
 		case END_BARRENS:
 		case END_HIGHLANDS:
@@ -465,7 +469,11 @@ public class UtilsTemperature {
 	
 	public static boolean isNether(Biome biome) {
 		switch (biome) {
-		case NETHER: return true;
+		case NETHER_WASTES: return true;
+		case CRIMSON_FOREST: return true;
+		case WARPED_FOREST: return true;
+		case BASALT_DELTAS: return true;
+		case SOUL_SAND_VALLEY: return true;
 		default: return false;
 		}
 	}
