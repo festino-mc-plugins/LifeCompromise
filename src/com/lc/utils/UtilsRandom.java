@@ -15,7 +15,6 @@ public class UtilsRandom {
 		// double border = Math.pow(2, 0.1 - hor_velocity);
 		double chance = max_probability - c / x;
 		double border = 1 - chance;
-		System.out.print("    isActivated_1 chance: " + chance);
 		return rand > border;
 	}
 	
