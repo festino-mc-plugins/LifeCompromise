@@ -174,7 +174,7 @@ public class Config implements IConfig {
 		DIAMOND_COLD("temp-armor-diamond-f", 0.35),
 		DIAMOND_WARM("temp-armor-diamond-h", 0.35),
 		NETHERITE_COLD("temp-armor-netherite-f", 0.25),
-		NETHERITE_WARM("temp-armor-netherite-h", 3),
+		NETHERITE_WARM("temp-armor-netherite-h", 3d),
 		ELYTRA_COLD("temp-armor-elytra-f", 1d),
 		ELYTRA_WARM("temp-armor-elytra-h", 1.5),
 		TURTLE_COLD("temp-armor-turtle-f", 3d),
