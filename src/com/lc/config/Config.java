@@ -140,6 +140,7 @@ public class Config implements IConfig {
 		HEIGHT_T_DIFF("height-temp-diff-blocks", 20d),
 		STORM_TEMP_DIFF("storm-temp-diff", 4d),
 		THUNDER_TEMP_DIFF("thunder-temp-diff", 6d),
+		NETHER_ROOF_TEMPERATURE("nether-roof-temperature", 31d),
 
 		THIRST_SLOWNESS_PERCENT("thirst-debuff-1-pct", 50d),
 		THIRST_NAUSEA_PERCENT("thirst-debuff-2-pct", 25d),
@@ -172,6 +173,8 @@ public class Config implements IConfig {
 		IRON_WARM("temp-armor-iron-h", 0.5),
 		DIAMOND_COLD("temp-armor-diamond-f", 0.35),
 		DIAMOND_WARM("temp-armor-diamond-h", 0.35),
+		NETHERITE_COLD("temp-armor-netherite-f", 0.25),
+		NETHERITE_WARM("temp-armor-netherite-h", 3),
 		ELYTRA_COLD("temp-armor-elytra-f", 1d),
 		ELYTRA_WARM("temp-armor-elytra-h", 1.5),
 		TURTLE_COLD("temp-armor-turtle-f", 3d),

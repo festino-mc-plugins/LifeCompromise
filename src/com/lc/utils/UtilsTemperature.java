@@ -18,8 +18,8 @@ import com.lc.config.Config.Key;
 import com.lc.config.TemperatureBlock;
 
 public class UtilsTemperature {
-	public static final double MIN_T = -273.15; // 147 квинтиллионов градусов
-	public static final double MAX_T = 147000000000000000000000.0;
+	public static final double MIN_T = -273.15;
+	public static final double MAX_T = 147_000000_000000_000000.0; // 147 quintillion degrees 
 	private static final int DAY_TICKS = 20 * 60 * 20;
 	private static final double REGULAR_TEMP = 24;
 	
@@ -124,13 +124,15 @@ public class UtilsTemperature {
 	public double getTemperatureSpeed(Player p, boolean is_increasing)
 	{
 		// TODO refactor
-		double leather, golden, chainmail, iron, diamond, elytra, turtle, water;
+		double leather, golden, chainmail, iron, diamond, netherite;
+		double elytra, turtle, water;
 		if (is_increasing) {
 			leather = config.get(Key.LEATHER_WARM);
 			golden = config.get(Key.GOLDEN_WARM);
 			chainmail = config.get(Key.CHAINMAIL_WARM);
 			iron = config.get(Key.IRON_WARM);
 			diamond = config.get(Key.DIAMOND_WARM);
+			netherite = config.get(Key.NETHERITE_WARM);
 			elytra = config.get(Key.ELYTRA_WARM);
 			turtle = config.get(Key.TURTLE_WARM);
 			water = config.get(Key.WATER_WARM);
@@ -140,6 +142,7 @@ public class UtilsTemperature {
 			chainmail = config.get(Key.CHAINMAIL_COLD);
 			iron = config.get(Key.IRON_COLD);
 			diamond = config.get(Key.DIAMOND_COLD);
+			netherite = config.get(Key.NETHERITE_COLD);
 			elytra = config.get(Key.ELYTRA_COLD);
 			turtle = config.get(Key.TURTLE_COLD);
 			water = config.get(Key.WATER_COLD);
@@ -175,6 +178,8 @@ public class UtilsTemperature {
 				material_impact = iron;
 			if (UtilsArmor.isDiamond(cur_is))
 				material_impact = diamond;
+			if (UtilsArmor.isNetherite(cur_is))
+				material_impact = netherite;
 			if (UtilsArmor.isElytra(cur_is))
 				material_impact = elytra;
 			if (UtilsArmor.isTurtleHelmet(cur_is))
@@ -220,7 +225,7 @@ public class UtilsTemperature {
 							if (tblock.nether_only && !isNether(b.getBiome()))
 								break;
 							if (tblock.hasTag() && tblock.getTag() == "lit") // TODO explicit behavior (i.e. in TemperatureBlock)
-								System.out.print(tblock.toString());
+								//System.out.print(tblock.toString());
 								if (b.getBlockData() instanceof Lightable) {
 									Lightable bd = (Lightable) b.getBlockData();
 									if (!bd.isLit())
@@ -248,7 +253,7 @@ public class UtilsTemperature {
 				else
 					result -= (height_max_t - loc.getY()) / height_t_diff;
 		}
-		return result; //Лёд в 2 блоках, огонь в 3, а лава в 5
+		return result;
 	}
 	
 	public double getDistance(Location loc, Block b) {
@@ -260,17 +265,20 @@ public class UtilsTemperature {
 		Biome biome = loc.getBlock().getBiome();
 		World world = loc.getWorld();
 		
+		if (isNether(biome) && loc.getBlockY() > 127)
+			return (Double) config.get(Key.NETHER_ROOF_TEMPERATURE);
+		
 		double temperature = getPureBiomeTemperature(biome);
-	
+
+		if (isNether(biome) || isEnd(biome))
+			return temperature;
+		
 		if (world.hasStorm() && isRainy(biome))
 		{
 			temperature += (Double) config.get(Key.STORM_TEMP_DIFF);
 			if(world.isThundering())
 				temperature += (Double) config.get(Key.THUNDER_TEMP_DIFF);
 		}
-		
-		if(isNether(biome) || isEnd(biome))
-			return temperature;
 		
 		double night_impact = getTimeTemperature(world);
 		double dayly_temp_diff;
@@ -373,11 +381,11 @@ public class UtilsTemperature {
 		case SNOWY_TAIGA_HILLS: return 10;
 		case TAIGA_HILLS: return 15;
 
-		case NETHER_WASTES: return 31;
-		case CRIMSON_FOREST: return 28;
-		case WARPED_FOREST: return 28;
-		case BASALT_DELTAS: return 35;
-		case SOUL_SAND_VALLEY: return 26;
+		case NETHER_WASTES: return 35;
+		case CRIMSON_FOREST: return 34;
+		case WARPED_FOREST: return 33;
+		case BASALT_DELTAS: return 37;
+		case SOUL_SAND_VALLEY: return 32;
 		case THE_END:
 		case END_BARRENS:
 		case END_HIGHLANDS:

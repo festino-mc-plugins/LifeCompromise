@@ -11,7 +11,7 @@ import com.lc.config.Config.Key;
 public class UtilsArmor {
 	
 	private static final double BOOTS_IMPACT = 1, LEGGINGS_IMPACT = 2, CHESTPLATE_IMPACT = 3, HELMET_IMPACT = 1;
-	private static final double LEATHER = 1, GOLDEN = 1.5, CHAINMAIL = 1.5, IRON = 2, DIAMOND = 3,
+	private static final double LEATHER = 1, GOLDEN = 1.5, CHAINMAIL = 1.5, IRON = 2, DIAMOND = 3, NETHERITE = 3.5,
 			ELYTRA = 2 / CHESTPLATE_IMPACT, TURTLE = 1.5 / HELMET_IMPACT;
 
 	private final Config config;
@@ -79,6 +79,8 @@ public class UtilsArmor {
 				material_weight = IRON;
 			if (UtilsArmor.isDiamond(cur_is))
 				material_weight = DIAMOND;
+			if (UtilsArmor.isNetherite(cur_is))
+				material_weight = NETHERITE;
 			if (UtilsArmor.isElytra(cur_is))
 				material_weight = ELYTRA;
 			if (UtilsArmor.isTurtleHelmet(cur_is))
@@ -168,6 +170,19 @@ public class UtilsArmor {
 		case DIAMOND_CHESTPLATE:
 		case DIAMOND_LEGGINGS:
 		case DIAMOND_BOOTS:
+			return true;
+		default:
+			return false;
+		}
+	}
+	
+	public static boolean isNetherite(ItemStack is) {
+		if (is == null) return false;
+		switch (is.getType()) {
+		case NETHERITE_HELMET:
+		case NETHERITE_CHESTPLATE:
+		case NETHERITE_LEGGINGS:
+		case NETHERITE_BOOTS:
 			return true;
 		default:
 			return false;
