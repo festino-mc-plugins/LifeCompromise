@@ -333,7 +333,7 @@ public class PlayerHandler implements Runnable {
 		l.setY(l.getY() - 0.1);
 		Material m = l.getBlock().getType();
 		if (m == Material.GRASS_BLOCK && UtilsRandom.parabolicRandom(0.03, 0.06, 0, hor_velocity))
-			l.getBlock().setType(Material.GRASS_PATH);
+			l.getBlock().setType(Material.DIRT_PATH);
 	}
 	
 	public static void sink(LCPlayer lcp, double force) {
