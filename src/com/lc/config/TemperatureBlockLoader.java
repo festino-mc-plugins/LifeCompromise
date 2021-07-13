@@ -53,7 +53,7 @@ public class TemperatureBlockLoader {
 				m = Material.valueOf(block_id.toUpperCase());
 			} catch (Exception e) {
 				// TODO error
-				System.out.print(block_id + " is not valid Material");
+				System.out.println(block_id + " is not valid Material");
 				continue;
 			}
 			
