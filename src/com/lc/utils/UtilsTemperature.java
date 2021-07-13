@@ -224,13 +224,14 @@ public class UtilsTemperature {
 						if (tblock.r >= distance && tblock.m == m) {
 							if (tblock.nether_only && !isNether(b.getBiome()))
 								break;
-							if (tblock.hasTag() && tblock.getTag() == "lit") // TODO explicit behavior (i.e. in TemperatureBlock)
-								//System.out.print(tblock.toString());
+							//System.out.println("1 "+tblock.toString() +" "+ Tblocks.size());
+							if (tblock.hasTag() && tblock.getTag().equalsIgnoreCase("lit")) { // TODO explicit behavior (i.e. in TemperatureBlock)
 								if (b.getBlockData() instanceof Lightable) {
 									Lightable bd = (Lightable) b.getBlockData();
 									if (!bd.isLit())
 										break;
 								}
+							}
 							
 							double temp = tblock.t * (tblock.r + 1 - distance);
 							if (tblock.fireness)
