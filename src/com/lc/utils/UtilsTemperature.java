@@ -305,31 +305,25 @@ public class UtilsTemperature {
 	
 	public static double getPureBiomeTemperature(Biome biome) {
 		switch (biome) {
-		case BIRCH_FOREST: return 24;
-		case TALL_BIRCH_FOREST: return 22;
-		case BIRCH_FOREST_HILLS: return 21;
-		case TALL_BIRCH_HILLS: return 19;
-		case FOREST: return 24;
-		case WOODED_HILLS: return 21;
+		case BIRCH_FOREST: return 24; //19->24
+		case OLD_GROWTH_BIRCH_FOREST: return 19;
+		case FOREST: return 24; // 21->24
 		case FLOWER_FOREST: return 25;
-		case DARK_FOREST: return 22;
-		case DARK_FOREST_HILLS: return 20;
+		case DARK_FOREST: return 22; // 20->22
 		case PLAINS: return 25;
-		case SUNFLOWER_PLAINS: return 22;
+		case SUNFLOWER_PLAINS: return 26;
+		case MEADOW: return 22;
 
 		case BEACH: return 22;
 		case RIVER: return 25;
 		case SNOWY_BEACH: return 16;
-		case STONE_SHORE: return 28;
+		case STONY_SHORE: return 28;
 		
-		case MOUNTAINS: return 22;
-		case WOODED_MOUNTAINS: return 20;
-		case GRAVELLY_MOUNTAINS: return 20;
-		case MODIFIED_GRAVELLY_MOUNTAINS: return 20;
-		case MOUNTAIN_EDGE: return 18;
+		case WINDSWEPT_FOREST: return 20;
+		case WINDSWEPT_GRAVELLY_HILLS: return 19;
+		case WINDSWEPT_HILLS: return 18;
 
 		case WARM_OCEAN: return 27;
-		case DEEP_WARM_OCEAN: return 22;
 		case LUKEWARM_OCEAN: return 20;
 		case DEEP_LUKEWARM_OCEAN: return 14;
 		case OCEAN: return 15;
@@ -340,47 +334,36 @@ public class UtilsTemperature {
 		case DEEP_FROZEN_OCEAN: return -15;
 		
 		case FROZEN_RIVER: return -4;
-		case SNOWY_TUNDRA: return 4;
+		case SNOWY_PLAINS: return 4;
 		case ICE_SPIKES: return -4;
-		case SNOWY_MOUNTAINS: return 2;
+		case SNOWY_SLOPES: return 2;
 		
-		case JUNGLE: return 38;
-		case JUNGLE_EDGE: return 30;
-		case JUNGLE_HILLS: return 32; 
-		case MODIFIED_JUNGLE: return 34;
-		case MODIFIED_JUNGLE_EDGE: return 31;
-		case BAMBOO_JUNGLE: return 31;
-		case BAMBOO_JUNGLE_HILLS: return 28;
+		case OLD_GROWTH_PINE_TAIGA: return 23;
+		case OLD_GROWTH_SPRUCE_TAIGA: return 21;
+		case TAIGA: return 17; // 15->17
+		case SNOWY_TAIGA: return 8; // 8->12
+		case GROVE: return 2;
+		case STONY_PEAKS: return 10;
+		case FROZEN_PEAKS: return -2;
+		case JAGGED_PEAKS: return -8;
+		
+		case JUNGLE: return 38; // 32->38
+		case SPARSE_JUNGLE: return 30;
+		case BAMBOO_JUNGLE: return 31; // 28->31
 
-		case DESERT: return 40; //
-		case DESERT_LAKES: return 37; //
-		case DESERT_HILLS: return 38; //
+		case DESERT: return 40; // 37->40
 		case BADLANDS: return 35;
 		case ERODED_BADLANDS: return 35;
-		case BADLANDS_PLATEAU: return 35;
-		case MODIFIED_BADLANDS_PLATEAU: return 35;
-		case WOODED_BADLANDS_PLATEAU: return 35;
-		case MODIFIED_WOODED_BADLANDS_PLATEAU: return 35;
+		case WOODED_BADLANDS: return 35;
 		case SAVANNA: return 29;
-		case SHATTERED_SAVANNA: return 27;
 		case SAVANNA_PLATEAU: return 29;
-		case SHATTERED_SAVANNA_PLATEAU: return 27;
+		case WINDSWEPT_SAVANNA: return 27;
 		
-		case MUSHROOM_FIELDS: return 22;
-		case MUSHROOM_FIELD_SHORE: return 21;
+		case MUSHROOM_FIELDS: return 22; // 21->22
+		case SWAMP: return 25; // 22->25
 		
-		case GIANT_TREE_TAIGA: return 23;
-		case GIANT_SPRUCE_TAIGA: return 23;
-		case GIANT_TREE_TAIGA_HILLS: return 22;
-		case GIANT_SPRUCE_TAIGA_HILLS: return 23;
-		case SWAMP: return 25;
-		case SWAMP_HILLS: return 22;
-		case TAIGA: return 17;
-		case TAIGA_MOUNTAINS: return 15;
-		case SNOWY_TAIGA: return 12;
-		case SNOWY_TAIGA_MOUNTAINS: return 8;
-		case SNOWY_TAIGA_HILLS: return 10;
-		case TAIGA_HILLS: return 15;
+		case DRIPSTONE_CAVES: return 10;
+		case LUSH_CAVES: return 16;
 
 		case NETHER_WASTES: return 35;
 		case CRIMSON_FOREST: return 34;
@@ -433,19 +416,12 @@ public class UtilsTemperature {
 	public static boolean isHeatCapacious(Biome biome) {
 		switch (biome) {
 		case DESERT:
-		case DESERT_LAKES:
-		case DESERT_HILLS:
 		case BADLANDS:
 		case ERODED_BADLANDS:
-		case BADLANDS_PLATEAU:
-		case MODIFIED_BADLANDS_PLATEAU:
-		case WOODED_BADLANDS_PLATEAU:
-		case MODIFIED_WOODED_BADLANDS_PLATEAU: 
+		case WOODED_BADLANDS:
 		case SAVANNA:
-		case SHATTERED_SAVANNA:
 		case SAVANNA_PLATEAU:
-		case SHATTERED_SAVANNA_PLATEAU:
-		case STONE_SHORE:
+		case STONY_SHORE:
 			return true;
 		default:
 			return false;
@@ -455,18 +431,12 @@ public class UtilsTemperature {
 	public static boolean isRainy(Biome biome) {
 		switch (biome) {
 		case DESERT:
-		case DESERT_LAKES:
-		case DESERT_HILLS:
 		case BADLANDS:
 		case ERODED_BADLANDS:
-		case BADLANDS_PLATEAU:
-		case MODIFIED_BADLANDS_PLATEAU:
-		case WOODED_BADLANDS_PLATEAU:
-		case MODIFIED_WOODED_BADLANDS_PLATEAU: 
+		case WOODED_BADLANDS:
 		case SAVANNA:
-		case SHATTERED_SAVANNA:
 		case SAVANNA_PLATEAU:
-		case SHATTERED_SAVANNA_PLATEAU:
+		case WINDSWEPT_SAVANNA:
 			return false;
 		default:
 			break;
