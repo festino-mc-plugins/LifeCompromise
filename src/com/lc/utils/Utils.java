@@ -84,18 +84,18 @@ public class Utils {
 	}
 	
 	public static double getCauldronLevel(Block b) {
-		if (b == null || b.getType() != Material.CAULDRON)
+		if (b == null || b.getType() != Material.WATER_CAULDRON)
 			return 0;
 		Levelled cauldron = (Levelled) b.getBlockData();
 		double level = cauldron.getLevel();
-		return level / cauldron.getMaximumLevel();
+		return (cauldron.getMaximumLevel() - level) / cauldron.getMaximumLevel();
 	}
 	
 	public static void decreaseCauldronLevel(Block b) {
-		if (b == null || b.getType() != Material.CAULDRON)
+		if (b == null || b.getType() != Material.WATER_CAULDRON)
 			return;
 		Levelled cauldron = (Levelled) b.getBlockData();
-		cauldron.setLevel(cauldron.getLevel() - 1);
+		cauldron.setLevel(cauldron.getLevel() + 1);
 		b.setBlockData(cauldron);
 	}
 	
